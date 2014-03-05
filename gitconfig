@@ -1,0 +1,90 @@
+[color]
+    ui = always 
+[color "branch"]
+    current = yellow bold
+    local = green bold
+    remote = cyan bold
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+    whitespace = red reverse
+[color "status"]
+    added = green bold
+    changed = yellow bold
+    untracked = red bold
+[core]
+    editor = vim
+    whitespace = fix,-indent-with-non-tab,trailing-space,cr-at-eol,-tab-in-indent
+	excludesfile = ~/.myconfig/gitignore_global
+	autocrlf = input
+[alias]
+    # LOGS
+    ll   = log --abbrev-commit         --pretty=format:'%C(green)%h%Cred%d %Creset%s%C(bold blue) <%cn>' --decorate 
+   
+    # all new commits after fetching, with stats, excluding merges
+    lc = log ORIG_HEAD.. --stat --no-merges
+ 
+    # Zeigt alle Commits mit Committer chronologisch an und welche Dateien verändert wurden
+    ls   = log --abbrev-commit         --pretty=format:'%C(green)%h%Cred%d %Creset%s%C(bold blue) <%cn> %cr' --decorate --numstat --all
+    
+    # Zeigt alle Commits mit Committer chronologisch an und viele Änderungen gemacht wurden
+    stat = log --abbrev-commit         --pretty=format:'%C(green)%h%Cred%d %Creset%s%C(bold blue) <%cn>' --decorate --shortstat
+
+    # Zeigt alle Commits mit Committer chronologisch mit Branch-Tree an
+    tr   = log --abbrev-commit --graph --pretty=format:'%C(green)%h%Cred%d %Creset%s%C(bold blue) <%cn> %Creset%Cblue%cr'
+
+    trl  = log --abbrev-commit --graph --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all --decorate
+    
+    # Status vom Arbeitsverzeichnis 
+    st   = status -s -b
+    
+    # Zeigt alle commiteten Dateien (und nur) für einen Commit
+    files = show --pretty="format:" --name-only
+
+    # Zeigt die letzten 10 Commits für eine Datei an
+    lc = log -n 10 --  
+ 
+    # Geänderte Dateien anzeigen
+    changes = log --abbrev-commit --no-merges --stat --author="AUTHOR" --name-only --oneline --pretty=format:'%C(green)%h%Cred%d %Creset%s%C(bold blue) <%cr>' --decorate 
+ 
+    # Letzen Commit löschen aber Änderungen beibehalten 
+    narf = reset --soft HEAD~1
+    
+    # Letzten commit anzeigen
+    last = !git ll -1 --pretty=format:'%n  %Cgreen%h %Creset%s%C(bold blue) <%cn> %cr%n%n' --decorate
+    #dl   = !git ll -1 --pretty=format:'\n %C(bold blue) %cn:%Creset %s [ %C(bold cyan)%h%Creset ]%C(bold blue) %cr\n%Creset' --decorate
+    
+    dlc  = diff HEAD^ HEAD    
+ 
+    # Suche nach Datei im Repo
+    f    = "!git ls-files | grep -i" 
+
+    # Suche nach einem String im Repo
+    fs   = grep -Ii
+
+    # Suche vom root Ordner an
+    fsr  = "!f() { A=$(pwd) && TOPLEVEL=$(git rev-parse --show-toplevel) && cd $TOPLEVEL && git grep --full-name -In $1 | xargs -I{} echo $TOPLEVEL/{} && cd $A; }; f"
+
+    lg80 = "!git log --graph --abbrev-commit --date=relative --pretty=format:'%x00%h%x00%s%x00%cd%x00%an%x00%d' | gawk -F '\\0' '{ printf \"%s\\033[31m%s\\033[0m %-80s \\033[32m%14s\\033[0m \\033[30;1m%s\\033[0m\\033[33m%s\\n\", $1, $2, gensub(/(.{119}).{2,}/, \"\\\\1…\",\"g\",$3), $4, $5, $6 }' | less -R"
+
+    bran = remote show origin
+	conflicts = diff --name-only --diff-filter=U
+    branchdate = !git for-each-ref --sort='-authordate' --format='%(authordate)%09 %(refname)' refs/heads | sed -e 's-refs/heads/--'
+[branch]
+    autosetuprebase = always
+[push]
+	default = matching
+[difftool "kdiff3"]
+    trustExitCode = false
+[difftool]
+    prompt = false
+[diff]
+    tool = kdiff3
+[mergetool "kdiff3"]
+    trustExitCode = false
+[mergetool]
+    keepBackup = false
+[merge]
+	tool = kdiff3
